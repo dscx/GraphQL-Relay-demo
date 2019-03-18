@@ -1,34 +1,67 @@
 "use strict";
 
-const { graphql, buildSchema } = require("graphql");
+const {
+  GraphQLSchema,
+  GraphQLObjectType,
+  GraphQLBoolean,
+  GraphQLInt,
+  GraphQLID,
+  GraphQLString
+} = require("graphql");
+
 const express = require("express");
 const graphqlHTTP = require("express-graphql");
 
 const PORT = process.env.PORT || 3000;
 const server = express();
 
-const schema = buildSchema(`
+const videoType = new GraphQLObjectType({
+  name: "Video",
+  desciption: "A video on graph QL!",
+  fields: {
+    id: {
+      type: GraphQLID,
+      descirption: "The id of the video."
+    },
+    title: {
+      type: GraphQLString,
+      descirption: "The title of the video."
+    },
+    duration: {
+      type: GraphQLInt,
+      descirption: "The duration of the video in seconds"
+    },
+    watched: {
+      type: GraphQLBoolean,
+      descirption: "Whether or not the video has been watched by the viewer"
+    }
+  }
+});
 
-type Video {
-    id: ID,
-    title: String,
-    duration: Int,
-    watched: Boolean,
-}
+const queryTpe = new GraphQLObjectType({
+  name: "QueryType",
+  desciption: "The root query type",
+  fields: {
+    video: {
+      type: videoType,
+      resolve: () =>
+        new Promise(resolve => {
+          resolve({
+            id: "a",
+            title: "GraphQL",
+            duration: 180,
+            watched: true
+          });
+        })
+    }
+  }
+});
 
-type Query {
-    video: Video
-    videos: [Video]
-}
-
-type Schema {
-    query: Query
-}
-`);
-
-const resolvers = {
-  videos: () => videos
-};
+const schema = new GraphQLSchema({
+  query: queryTpe,
+//   mutation,
+//   subsciption
+});
 
 const videoA = {
   title: "Create a GraphQL Schema",
@@ -50,11 +83,10 @@ server.use(
   "/graphql",
   graphqlHTTP({
     schema,
-    graphiql: true,
-    rootValue: resolvers
+    graphiql: true
   })
 );
 
 server.listen(PORT, () => {
-    console.log(`Listening on http://localhos:${PORT}`);
-})
+  console.log(`Listening on http://localhos:${PORT}`);
+});
