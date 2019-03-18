@@ -2,14 +2,14 @@ const videoA = {
   title: "Create a GraphQL Schema",
   id: "a",
   duration: 180,
-  watched: true
+  released: true
 };
 
 const videoB = {
   title: "React JS Crash Course",
   id: "b",
   duration: 380,
-  watched: false
+  released: false
 };
 
 const videos = [videoA, videoB];
@@ -28,5 +28,18 @@ const getVideos = () =>
     resolve(videos);
   });
 
+const createVideo = ({ title, duration, released }) => {
+  const video = {
+    id: new Buffer(title, "utf8").toString("base64"),
+    title,
+    duration,
+    released
+  };
+
+  videos.push(video);
+  return video;
+};
+
 exports.getVideoById = getVideoById;
 exports.getVideos = getVideos;
+exports.createVideo = createVideo;
