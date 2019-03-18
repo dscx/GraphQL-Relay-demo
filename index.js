@@ -6,7 +6,8 @@ const {
   GraphQLBoolean,
   GraphQLInt,
   GraphQLID,
-  GraphQLString
+  GraphQLString,
+  GraphQLNonNull
 } = require("graphql");
 const express = require("express");
 const graphqlHTTP = require("express-graphql");
@@ -47,7 +48,7 @@ const queryTpe = new GraphQLObjectType({
       type: videoType,
       args: {
         id: {
-          type: GraphQLID,
+          type: new GraphQLNonNull(GraphQLID),
           description: "The ID of the video."
         }
       },
@@ -71,5 +72,5 @@ server.use(
 );
 
 server.listen(PORT, () => {
-  console.log(`Listening on http://localhos:${PORT}`);
+  console.log(`Listening on http://localhost:${PORT}`);
 });
